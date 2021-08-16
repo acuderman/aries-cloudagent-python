@@ -56,6 +56,7 @@ class MultitenantManager:
             Optional[MediationRecord]: retrieved default mediator or None if not set
 
         """
+
         return await MediationManager(self._profile).get_default_mediator()
 
     async def _wallet_name_exists(
@@ -143,7 +144,7 @@ class MultitenantManager:
 
         """
         print("get wallet profile")
-        base_sub_wallet_name = "base_sub_wallet_name3"
+        base_sub_wallet_name = "base_sub_wallet_name12"
 
         context = base_context.copy()
 
@@ -167,15 +168,17 @@ class MultitenantManager:
 
                 "auto_provision": True,
                 #"wallet.key": "walletkey",
+
                 "wallet.name": base_sub_wallet_name,
             }
 
 
             over_settings = {
-            "wallet.type": "askar",
-            "auto_provision": True,
-            "wallet.name": base_sub_wallet_name,
-            "wallet.id": None,
+                "wallet.type": "askar",
+                "auto_provision": True,
+                "wallet.name": base_sub_wallet_name,
+                "wallet.id": None,
+                "wallet.key": "walletkey",
             }
 
             context.settings = (
@@ -216,8 +219,6 @@ class MultitenantManager:
                 .extend(extra_settings)
                 .extend(over_settings)
         )
-
-
 
         return AskarProfile(base_sub_wallet.opened, profile_context)
 

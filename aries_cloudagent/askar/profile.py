@@ -164,8 +164,8 @@ class AskarProfileSession(ProfileSession):
         """Create a new IndySdkProfileSession instance."""
         super().__init__(profile=profile, context=context, settings=settings)
         print("profile session")
-        print(profile.context.settings)
         print(profile.context.settings.get("wallet.id"))
+        print(profile.context.settings.get("wallet.name"))
         if is_txn:
             self._opener = self.profile.store.transaction(profile.context.settings.get("wallet.id"))
         else:
@@ -199,7 +199,6 @@ class AskarProfileSession(ProfileSession):
         except AskarError as err:
             raise ProfileError("Error opening store session") from err
         self._acquire_end = time.perf_counter()
-        self._opener = None
 
         injector = self._context.injector
         injector.bind_provider(
@@ -218,6 +217,9 @@ class AskarProfileSession(ProfileSession):
                 await self._handle.commit()
             except AskarError as err:
                 raise ProfileError("Error committing transaction") from err
+
+        await self._opener.__aexit__(None, None, None)
+        self._opener = None
         self._handle = None
         self._check_duration()
 
