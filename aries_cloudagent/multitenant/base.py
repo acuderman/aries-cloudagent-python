@@ -14,7 +14,6 @@ from ..messaging.responder import BaseResponder
 from ..config.injection_context import InjectionContext
 from ..wallet.models.wallet_record import WalletRecord
 from ..wallet.base import BaseWallet
-from ..core.error import BaseError
 from ..protocols.routing.v1_0.manager import RouteNotFoundError, RoutingManager
 from ..protocols.routing.v1_0.models.route_record import RouteRecord
 from ..transport.wire_format import BaseWireFormat
@@ -25,14 +24,9 @@ from ..protocols.coordinate_mediation.v1_0.manager import (
     MediationRecord,
 )
 
-from .error import WalletKeyMissingError
+from .error import WalletKeyMissingError, MultitenantManagerError
 
 LOGGER = logging.getLogger(__name__)
-
-
-class MultitenantManagerError(BaseError):
-    """Generic multitenant error."""
-
 
 class BaseMultitenantManager:
     """Class for handling multitenancy."""

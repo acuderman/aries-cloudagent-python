@@ -5,3 +5,6 @@ from ..core.error import BaseError
 
 class WalletKeyMissingError(BaseError):
     """Wallet key missing exception."""
+
+class MultitenantManagerError(BaseError):
+    """Generic multitenant error."""

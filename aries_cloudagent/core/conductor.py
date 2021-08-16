@@ -23,7 +23,9 @@ from ..connections.models.conn_record import ConnRecord
 from ..core.profile import Profile
 from ..ledger.error import LedgerConfigError, LedgerTransactionError
 from ..messaging.responder import BaseResponder
+from ..multitenant.base import BaseMultitenantManager
 from ..multitenant.manager import MultitenantManager
+from ..multitenant.askar_profile_manager import AskarProfileMultitenantManager
 from ..protocols.connections.v1_0.manager import (
     ConnectionManager,
     ConnectionManagerError,
@@ -127,8 +129,8 @@ class Conductor:
 
         # Bind manager for multitenancy related tasks
         if context.settings.get("multitenant.enabled"):
-            multitenant_mgr = MultitenantManager(self.root_profile)
-            context.injector.bind_instance(MultitenantManager, multitenant_mgr)
+            multitenant_mgr = self._select_manager(context)
+            context.injector.bind_instance(BaseMultitenantManager, multitenant_mgr)
 
         # Bind default PyLD document loader
         context.injector.bind_instance(
@@ -593,3 +595,11 @@ class Conductor:
             LOGGER.warning(
                 "Cannot queue message webhook for delivery, no supported transport"
             )
+
+    def _select_manager(self, context):
+        context.update_settings( #remove this, will be replaced by CLI param
+            {"multitenant.type": "askar"}
+        )
+        if context.settings.get("multitenant.type") == "askar":
+            return  AskarProfileMultitenantManager(self.root_profile)
+        return MultitenantManager(self.root_profile)
