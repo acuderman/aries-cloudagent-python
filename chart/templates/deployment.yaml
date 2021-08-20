@@ -67,9 +67,11 @@ spec:
             value: 'postgres_storage'
           - name: ACAPY_WALLET_STORAGE_CONFIG:
             value: '{"url":"172.17.0.1:5437"}' # same as for ACAPY_ENDPOINT
-          - name: ACAPY_WALLET_STORAGE_CREDS:
-              # update with reald db values
-            value: '{\"account\":\"db_user_name\",\"password\":\"db_password\",\"admin_account\":\"admin_db_user_name\",\"admin_password\":\"admin_db_password\"}'
+          - name: ACAPY_WALLET_STORAGE_CREDS
+            valueFrom:
+              secretKeyRef:
+                key: wallet-storage-creds
+                name: poc-acapy-multitenant
           - name: ACAPY_WALLET_NAME:
             value: 'acapy_base_wallet'
           - name: ACAPY_AUTO_ACCEPT_INVITES:
