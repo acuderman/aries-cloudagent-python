@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "poc-acapy-multitenant.fullname" . }}
+  labels:
+    app: {{ include "poc-acapy-multitenant.name" . }}
+    chart: {{ include "poc-acapy-multitenant.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    
+    # have no idea what should be left here except env variables
+
+# spec:
+#   strategy:
+#     type: RollingUpdate
+#     rollingUpdate:
+#       maxSurge: 1
+#       maxUnavailable: 0
+#   replicas: {{ .Values.replicaCount }}
+#   selector:
+#     matchLabels:
+#       app: {{ include "poc-acapy-multitenant.name" . }}
+#       release: {{ .Release.Name }}
+#   template:
+#     metadata:
+#       labels:
+#         app: {{ include "poc-acapy-multitenant.name" . }}
+#         release: {{ .Release.Name }}
+#     spec:
+#       containers:
+#         - name: {{ .Chart.Name }}
+#           image: "{{ .Values.image }}"
+#           imagePullPolicy: {{ .Values.imagePullPolicy }}
+#           ports:
+#             - name: mainport
+#               containerPort: {{ .Values.service.port }}
+#           resources:
+# {{ toYaml .Values.resources | indent 12 }}
+#           livenessProbe:
+#             httpGet:
+#               path: {{ .Values.health.liveliness.path }}
+#               port: {{ .Values.health.port }}
+#             initialDelaySeconds: {{ .Values.health.initialDelaySeconds }}
+#             periodSeconds: {{ .Values.health.periodSeconds }}
+#           readinessProbe:
+#             httpGet:
+#               path: {{ .Values.health.readiness.path }}
+#               port: {{ .Values.health.port }}
+#             initialDelaySeconds: {{ .Values.health.initialDelaySeconds }}
+#             periodSeconds: {{ .Values.health.periodSeconds }}
+#           startupProbe:
+#             httpGet:
+#               path: {{ .Values.health.startup.path }}
+#               port: {{ .Values.health.port }}
+#             initialDelaySeconds: {{ .Values.health.initialDelaySeconds }}
+#             periodSeconds: {{ .Values.health.periodSeconds }}
+#             failureThreshold: {{ .Values.health.failureThreshold }}
+          envFrom:
+            - configMapRef:
+                name: shared-config
+          env:
+          - name: ACAPY_ENDPOINT
+{{ toYaml .Values.acapyEndpoint | indent 12 }}
+          - name: ACAPY_INBOUND_TRANSPORT
+{{ toYaml .Values.acapyInboundTransport | indent 12 }}
+          - name: ACAPY_NO_LEDGER
+{{ toYaml .Values.acapyNoLedger | indent 12 }}
+          - name: ACAPY_OUTBOUND_TRANSPORT
+{{ toYaml .Values.acapyOutboundTransport | indent 12 }}
+          - name: ACAPY_ADMIN
+{{ toYaml .Values.acapyAdmin | indent 12 }}
+          - name: ACAPY_ADMIN_INSECURE_MODE
+{{ toYaml .Values.acapyAdminInsecureMode | indent 12 }}
+          - name: ACAPY_WALLET_TYPE
+{{ toYaml .Values.acapyWalletType | indent 12 }}
+          - name: ACAPY_AUTO_PROVISION
+{{ toYaml .Values.acapyAutoProvision | indent 12 }}
+          - name: ACAPY_TRACE_TARGET
+{{ toYaml .Values.acapyTraceTarget | indent 12 }}
+          - name: ACAPY_WALLET_STORAGE_TYPE
+{{ toYaml .Values.acapyWalletStorageType | indent 12 }}
+          - name: ACAPY_WALLET_STORAGE_CONFIG
+{{ toYaml .Values.acapyWalletStorageConfig | indent 12 }}
+          - name: ACAPY_WALLET_STORAGE_CREDS
+{{ toYaml .Values.acapyWalletStorageCreds | indent 12 }}
+          - name: ACAPY_WALLET_NAME
+{{ toYaml .Values.acapyWalletName | indent 12 }}
+          - name: ACAPY_AUTO_ACCEPT_INVITES
+{{ toYaml .Values.acapyAutoAcceptInvites | indent 12 }}
+          - name: ACAPY_AUTO_ACCEPT_REQUESTS
+{{ toYaml .Values.acapyAutoAcceptRequests | indent 12 }}
+          - name: ACAPY_AUTO_STORE_CREDENTIAL
+{{ toYaml .Values.acapyAutoStoreCredential | indent 12 }}
+          - name: ACAPY_WEBHOOK_URL
+{{ toYaml .Values.acapyWebhookUrl | indent 12 }}
+          - name: ACAPY_MULTITENANT
+{{ toYaml .Values.acapyMultitenant | indent 12 }}
+          - name: ACAPY_MULTITENANT_ADMIN
+{{ toYaml .Values.acapyMultitenantAdmin | indent 12 }}
+          - name: ACAPY_MULTITENANT_JWT_SECRET
+{{ toYaml .Values.acapyMutliteenantJwtSecret | indent 12 }}
+      {{- with .Values.nodeSelector }}
+      
+  nodeSelector:
+    {{ toYaml . | indent 8 }}
+        {{- end }}
+        {{- with .Values.affinity }}
+          affinity:
+    {{ toYaml . | indent 8 }}
+        {{- end }}
+        {{- with .Values.tolerations }}
+          tolerations:
+    {{ toYaml . | indent 8 }}
+        {{- end }}
+    

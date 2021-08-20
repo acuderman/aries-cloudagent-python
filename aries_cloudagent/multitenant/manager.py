@@ -144,7 +144,7 @@ class MultitenantManager:
 
         """
         print("get wallet profile")
-        base_sub_wallet_name = "base_sub_wallet_name12"
+        base_sub_wallet_name = "acapy_multitenant_wallet"
 
         context = base_context.copy()
 

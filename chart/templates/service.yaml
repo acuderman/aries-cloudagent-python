@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "poc-acapy-multitenant.fullname" . }}
+  labels:
+    app: {{ include "poc-acapy-multitenant.name" . }}
+    chart: {{ include "poc-acapy-multitenant.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+  selector:
+    app: {{ include "poc-acapy-multitenant.name" . }}
+    release: {{ .Release.Name }}
