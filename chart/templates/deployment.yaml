@@ -20,9 +20,6 @@ spec:
       release: poc-acapy-multitenant
   template:
     metadata:
-      annotations:
-        # needs to be updated I suppose
-        iam.amazonaws.com/role: arn:aws:iam::715299534867:role/gid-dev-poc-acapy-multitenant
       labels:
         app: poc-acapy-multitenant
         release: poc-acapy-multitenant
@@ -42,21 +39,6 @@ spec:
             requests:
               cpu: 250m
               memory: 192Mi
-          # should readinessProbe and startupProbe be present? 
-          readinessProbe:
-            httpGet:
-              path: poc-acapy-multitenant/health/ready
-              port: 8800
-            initialDelaySeconds: 15
-            periodSeconds: 10
-            failureThreshold: 25
-          startupProbe:
-            httpGet:
-              path: poc-acapy-multitenant/health/alive
-              port: 8800
-            initialDelaySeconds: 15
-            periodSeconds: 10
-            failureThreshold: 10
           envFrom:
             - configMapRef:
                 name: shared-config
@@ -104,18 +86,3 @@ spec:
             value: 'true'
           - name: ACAPY_MULTITENANT_JWT_SECRET:
             value: 'sec'            
-            valueFrom:
-              secretKeyRef:
-                key: aws-chime-secret-key
-                name: poc-acapy-multitenant
-          - name: AWS_CHIME_KEY_ID
-            valueFrom:
-              secretKeyRef:
-                key: aws-chime-key-id
-                name: poc-acapy-multitenant
-          - name: CALL_LIMIT_TOTAL
-            value: "10"
-          - name: CALL_LIMIT_HOURS
-            value: "1"
-          - name: CALL_LIMIT_JOINABLE_HOURS
-            value: "24"
