@@ -189,7 +189,7 @@ class MultitenantManager:
             )
 
             # MTODO: add ledger config
-            profile, _ = await wallet_config(context, provision=True)
+            profile, _ = await wallet_config(context, provision=False)
             self._instances[base_sub_wallet_name] = profile
 
         print("create profile")
