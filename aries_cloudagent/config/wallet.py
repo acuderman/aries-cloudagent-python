@@ -10,7 +10,6 @@ from ..wallet.did_info import DIDInfo
 from ..wallet.crypto import seed_to_did
 from ..wallet.key_type import KeyType
 from ..wallet.did_method import DIDMethod
-from aries_askar import AskarError, Session, Store
 
 from .base import ConfigError
 from .injection_context import InjectionContext
@@ -44,8 +43,6 @@ async def wallet_config(
         try:
             profile = await mgr.open(context, profile_cfg)
         except ProfileNotFoundError:
-            print("profile_cfg")
-            print(profile_cfg)
             if settings.get("auto_provision", False):
                 profile = await mgr.provision(context, profile_cfg)
             else:

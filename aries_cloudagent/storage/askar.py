@@ -364,7 +364,7 @@ class AskarStorageSearchSession(BaseStorageSearchSession):
         if self._scan:
             return
         try:
-            self._scan = self._profile.store.scan(self.type_filter, self.tag_query, profile = self._profile.settings.get("wallet.id"))
+            self._scan = self._profile.store.scan(self.type_filter, self.tag_query)
         except AskarError as err:
             raise StorageSearchError("Error opening search query") from err
 

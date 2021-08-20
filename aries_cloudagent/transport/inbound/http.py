@@ -94,8 +94,6 @@ class HttpTransport(BaseInboundTransport):
         async with session:
             try:
                 inbound = await session.receive(body)
-                print("didcomm-message")
-                print(inbound.payload)
             except (MessageParseError, WireFormatParseError):
                 raise web.HTTPBadRequest()
 
