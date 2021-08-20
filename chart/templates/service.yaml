@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: poc-acapy-multitenant
+  labels:
+    app: poc-acapy-multitenant
+    chart: poc-acapy-multitenant-0.1.0
+    release: poc-acapy-multitenant
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9836
+  selector:
+    app: poc-acapy-multitenant
+    release: poc-acapy-multitenant

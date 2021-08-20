@@ -39,6 +39,8 @@ class AskarProfile(Profile):
     def __init__(self, opened: AskarOpenStore, context: InjectionContext = None):
         """Create a new AskarProfile instance."""
         super().__init__(context=context, name=opened.name, created=opened.created)
+        print("askarprofile settingg")
+        print(context.settings)
         self.opened = opened
         self.ledger_pool: IndyVdrLedgerPool = None
         self.init_ledger_pool()
@@ -53,6 +55,10 @@ class AskarProfile(Profile):
     def store(self) -> Store:
         """Accessor for the opened Store instance."""
         return self.opened.store
+
+    def opened(self) -> AskarOpenStore:
+        """Accessor for the opened instance."""
+        return self.opened
 
     def init_ledger_pool(self):
         """Initialize the ledger pool."""
@@ -121,6 +127,9 @@ class AskarProfile(Profile):
                 ),
             )
 
+    async def create_profile(self, profile_name: str) -> str:
+        return await self.opened.store.create_profile(profile_name)
+
     def session(self, context: InjectionContext = None) -> ProfileSession:
         """Start a new interactive session with no transaction support requested."""
         return AskarProfileSession(self, False, context=context)
@@ -154,10 +163,13 @@ class AskarProfileSession(ProfileSession):
     ):
         """Create a new IndySdkProfileSession instance."""
         super().__init__(profile=profile, context=context, settings=settings)
+        print("profile session")
+        print(profile.context.settings.get("wallet.id"))
+        print(profile.context.settings.get("wallet.name"))
         if is_txn:
-            self._opener = self.profile.store.transaction()
+            self._opener = self.profile.store.transaction(profile.context.settings.get("wallet.id"))
         else:
-            self._opener = self.profile.store.session()
+            self._opener = self.profile.store.session(profile.context.settings.get("wallet.id"))
         self._handle: Session = None
         self._acquire_start: float = None
         self._acquire_end: float = None
@@ -187,7 +199,6 @@ class AskarProfileSession(ProfileSession):
         except AskarError as err:
             raise ProfileError("Error opening store session") from err
         self._acquire_end = time.perf_counter()
-        self._opener = None
 
         injector = self._context.injector
         injector.bind_provider(
@@ -206,6 +217,9 @@ class AskarProfileSession(ProfileSession):
                 await self._handle.commit()
             except AskarError as err:
                 raise ProfileError("Error committing transaction") from err
+
+        await self._opener.__aexit__(None, None, None)
+        self._opener = None
         self._handle = None
         self._check_duration()
 

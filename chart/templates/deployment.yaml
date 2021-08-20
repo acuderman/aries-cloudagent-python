@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poc-acapy-multitenant
+  labels:
+    app: poc-acapy-multitenant
+    chart: poc-acapy-multitenant-0.1.0
+    release: poc-acapy-multitenant
+    heritage: Helm
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: poc-acapy-multitenant
+      release: poc-acapy-multitenant
+  template:
+    metadata:
+      labels:
+        app: poc-acapy-multitenant
+        release: poc-acapy-multitenant
+    spec:
+      containers:
+        - name: poc-acapy-multitenant
+          image: "715299534867.dkr.ecr.us-east-1.amazonaws.com/poc-acapy-multitenant:latest" 
+          imagePullPolicy: IfNotPresent
+          ports:
+            - '8040:8040'
+            - '8041:8041'
+          resources:
+            limits:
+              cpu: 500m
+              memory: 768Mi
+            requests:
+              cpu: 250m
+              memory: 192Mi
+          envFrom:
+            - configMapRef:
+                name: shared-config
+            - configMapRef:
+                name: poc-acapy-multitenant
+          env:
+          - name: ACAPY_ENDPOINT:
+            value: 'http://poc-acapy-multitenant.ssi.svc.cluster.local:9836'
+          - name: ACAPY_INBOUND_TRANSPORT:
+            value: 'http 0.0.0.0 8040'
+          - name: ACAPY_NO_LEDGER:
+            value: 'true'
+          - name: ACAPY_OUTBOUND_TRANSPORT:
+            value: 'http'
+          - name: ACAPY_ADMIN:
+            value: '0.0.0.0 8041'
+          - name: ACAPY_ADMIN_INSECURE_MODE:
+            value: 'true'
+          - name: ACAPY_WALLET_TYPE:
+            value: 'askar'
+          - name: ACAPY_AUTO_PROVISION:
+            value: 'true'
+          - name: ACAPY_TRACE_TARGET:
+            value: 'log'
+          - name: ACAPY_WALLET_STORAGE_TYPE:
+            value: 'postgres_storage'
+          - name: ACAPY_WALLET_STORAGE_CONFIG:
+            value: '{"url":"postgres.db.internal.global.id:5432"}'
+          - name: ACAPY_WALLET_STORAGE_CREDS
+            valueFrom:
+              secretKeyRef:
+                key: wallet-storage-creds
+                name: poc-acapy-multitenant
+          - name: ACAPY_WALLET_NAME:
+            value: 'acapy_base_wallet'
+          - name: ACAPY_AUTO_ACCEPT_INVITES:
+            value: 'true'
+          - name: ACAPY_AUTO_ACCEPT_REQUESTS:
+            value: 'true'
+          - name: ACAPY_AUTO_STORE_CREDENTIAL:
+            value: 'true'
+          - name: ACAPY_WEBHOOK_URL:
+            value: 'https://webhook.site/86832008-51c0-4e5d-b9e0-aedcb8acf69c'
+          - name: ACAPY_MULTITENANT:
+            value: 'true'
+          - name: ACAPY_MULTITENANT_ADMIN:
+            value: 'true'
+          - name: ACAPY_MULTITENANT_JWT_SECRET:
+            value: 'sec'            
