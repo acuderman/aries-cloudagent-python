@@ -26,8 +26,7 @@ spec:
     spec:
       containers:
         - name: poc-acapy-multitenant
-          # needs to be updated with published image value
-          # image: "715299534867.dkr.ecr.us-east-1.amazonaws.com/poc-acapy-multitenant:2a333a454c04f014aa02895249b2a98d4d924b78" 
+          image: "715299534867.dkr.ecr.us-east-1.amazonaws.com/poc-acapy-multitenant:latest" 
           imagePullPolicy: IfNotPresent
           ports:
             - '8040:8040'
