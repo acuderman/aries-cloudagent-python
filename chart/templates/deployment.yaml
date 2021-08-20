@@ -45,7 +45,7 @@ spec:
                 name: poc-acapy-multitenant
           env:
           - name: ACAPY_ENDPOINT:
-            value: 'http://172.17.0.1:8040' # acapy endpoint should be the actual url on which other agents can access him
+            value: 'http://poc-acapy-multitenant.ssi.svc.cluster.local:9836'
           - name: ACAPY_INBOUND_TRANSPORT:
             value: 'http 0.0.0.0 8040'
           - name: ACAPY_NO_LEDGER:
@@ -65,7 +65,7 @@ spec:
           - name: ACAPY_WALLET_STORAGE_TYPE:
             value: 'postgres_storage'
           - name: ACAPY_WALLET_STORAGE_CONFIG:
-            value: '{"url":"172.17.0.1:5437"}' # same as for ACAPY_ENDPOINT
+            value: '{"url":"postgres.db.internal.global.id:5432"}'
           - name: ACAPY_WALLET_STORAGE_CREDS
             valueFrom:
               secretKeyRef:
