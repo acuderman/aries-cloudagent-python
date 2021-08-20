@@ -1,115 +1,121 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "poc-acapy-multitenant.fullname" . }}
+  name: poc-acapy-multitenant
   labels:
-    app: {{ include "poc-acapy-multitenant.name" . }}
-    chart: {{ include "poc-acapy-multitenant.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    
-    # have no idea what should be left here except env variables
-
-# spec:
-#   strategy:
-#     type: RollingUpdate
-#     rollingUpdate:
-#       maxSurge: 1
-#       maxUnavailable: 0
-#   replicas: {{ .Values.replicaCount }}
-#   selector:
-#     matchLabels:
-#       app: {{ include "poc-acapy-multitenant.name" . }}
-#       release: {{ .Release.Name }}
-#   template:
-#     metadata:
-#       labels:
-#         app: {{ include "poc-acapy-multitenant.name" . }}
-#         release: {{ .Release.Name }}
-#     spec:
-#       containers:
-#         - name: {{ .Chart.Name }}
-#           image: "{{ .Values.image }}"
-#           imagePullPolicy: {{ .Values.imagePullPolicy }}
-#           ports:
-#             - name: mainport
-#               containerPort: {{ .Values.service.port }}
-#           resources:
-# {{ toYaml .Values.resources | indent 12 }}
-#           livenessProbe:
-#             httpGet:
-#               path: {{ .Values.health.liveliness.path }}
-#               port: {{ .Values.health.port }}
-#             initialDelaySeconds: {{ .Values.health.initialDelaySeconds }}
-#             periodSeconds: {{ .Values.health.periodSeconds }}
-#           readinessProbe:
-#             httpGet:
-#               path: {{ .Values.health.readiness.path }}
-#               port: {{ .Values.health.port }}
-#             initialDelaySeconds: {{ .Values.health.initialDelaySeconds }}
-#             periodSeconds: {{ .Values.health.periodSeconds }}
-#           startupProbe:
-#             httpGet:
-#               path: {{ .Values.health.startup.path }}
-#               port: {{ .Values.health.port }}
-#             initialDelaySeconds: {{ .Values.health.initialDelaySeconds }}
-#             periodSeconds: {{ .Values.health.periodSeconds }}
-#             failureThreshold: {{ .Values.health.failureThreshold }}
+    app: poc-acapy-multitenant
+    chart: poc-acapy-multitenant-0.1.0
+    release: poc-acapy-multitenant
+    heritage: Helm
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: poc-acapy-multitenant
+      release: poc-acapy-multitenant
+  template:
+    metadata:
+      annotations:
+        # needs to be updated I suppose
+        iam.amazonaws.com/role: arn:aws:iam::715299534867:role/gid-dev-poc-acapy-multitenant
+      labels:
+        app: poc-acapy-multitenant
+        release: poc-acapy-multitenant
+    spec:
+      containers:
+        - name: poc-acapy-multitenant
+          # needs to be updated with published image value
+          # image: "715299534867.dkr.ecr.us-east-1.amazonaws.com/poc-acapy-multitenant:2a333a454c04f014aa02895249b2a98d4d924b78" 
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: mainport
+              containerPort: 9836
+          resources:
+            limits:
+              cpu: 500m
+              memory: 768Mi
+            requests:
+              cpu: 250m
+              memory: 192Mi
+          # should readinessProbe and startupProbe be present? 
+          readinessProbe:
+            httpGet:
+              path: poc-acapy-multitenant/health/ready
+              port: 8800
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 25
+          startupProbe:
+            httpGet:
+              path: poc-acapy-multitenant/health/alive
+              port: 8800
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 10
           envFrom:
             - configMapRef:
                 name: shared-config
+            - configMapRef:
+                name: poc-acapy-multitenant
           env:
-          - name: ACAPY_ENDPOINT
-{{ toYaml .Values.acapyEndpoint | indent 12 }}
-          - name: ACAPY_INBOUND_TRANSPORT
-{{ toYaml .Values.acapyInboundTransport | indent 12 }}
-          - name: ACAPY_NO_LEDGER
-{{ toYaml .Values.acapyNoLedger | indent 12 }}
-          - name: ACAPY_OUTBOUND_TRANSPORT
-{{ toYaml .Values.acapyOutboundTransport | indent 12 }}
-          - name: ACAPY_ADMIN
-{{ toYaml .Values.acapyAdmin | indent 12 }}
-          - name: ACAPY_ADMIN_INSECURE_MODE
-{{ toYaml .Values.acapyAdminInsecureMode | indent 12 }}
-          - name: ACAPY_WALLET_TYPE
-{{ toYaml .Values.acapyWalletType | indent 12 }}
-          - name: ACAPY_AUTO_PROVISION
-{{ toYaml .Values.acapyAutoProvision | indent 12 }}
-          - name: ACAPY_TRACE_TARGET
-{{ toYaml .Values.acapyTraceTarget | indent 12 }}
-          - name: ACAPY_WALLET_STORAGE_TYPE
-{{ toYaml .Values.acapyWalletStorageType | indent 12 }}
-          - name: ACAPY_WALLET_STORAGE_CONFIG
-{{ toYaml .Values.acapyWalletStorageConfig | indent 12 }}
-          - name: ACAPY_WALLET_STORAGE_CREDS
-{{ toYaml .Values.acapyWalletStorageCreds | indent 12 }}
-          - name: ACAPY_WALLET_NAME
-{{ toYaml .Values.acapyWalletName | indent 12 }}
-          - name: ACAPY_AUTO_ACCEPT_INVITES
-{{ toYaml .Values.acapyAutoAcceptInvites | indent 12 }}
-          - name: ACAPY_AUTO_ACCEPT_REQUESTS
-{{ toYaml .Values.acapyAutoAcceptRequests | indent 12 }}
-          - name: ACAPY_AUTO_STORE_CREDENTIAL
-{{ toYaml .Values.acapyAutoStoreCredential | indent 12 }}
-          - name: ACAPY_WEBHOOK_URL
-{{ toYaml .Values.acapyWebhookUrl | indent 12 }}
-          - name: ACAPY_MULTITENANT
-{{ toYaml .Values.acapyMultitenant | indent 12 }}
-          - name: ACAPY_MULTITENANT_ADMIN
-{{ toYaml .Values.acapyMultitenantAdmin | indent 12 }}
-          - name: ACAPY_MULTITENANT_JWT_SECRET
-{{ toYaml .Values.acapyMutliteenantJwtSecret | indent 12 }}
-      {{- with .Values.nodeSelector }}
-      
-  nodeSelector:
-    {{ toYaml . | indent 8 }}
-        {{- end }}
-        {{- with .Values.affinity }}
-          affinity:
-    {{ toYaml . | indent 8 }}
-        {{- end }}
-        {{- with .Values.tolerations }}
-          tolerations:
-    {{ toYaml . | indent 8 }}
-        {{- end }}
-    
+          - name: ACAPY_ENDPOINT:
+            value: 'http://172.17.0.1:8040' # acapy endpoint should be the actual url on which other agents can access him
+          - name: ACAPY_INBOUND_TRANSPORT:
+            value: 'http 0.0.0.0 8040'
+          - name: ACAPY_NO_LEDGER:
+            value: 'true'
+          - name: ACAPY_OUTBOUND_TRANSPORT:
+            value: 'http'
+          - name: ACAPY_ADMIN:
+            value: '0.0.0.0 8041'
+          - name: ACAPY_ADMIN_INSECURE_MODE:
+            value: 'true'
+          - name: ACAPY_WALLET_TYPE:
+            value: 'askar'
+          - name: ACAPY_AUTO_PROVISION:
+            value: 'true'
+          - name: ACAPY_TRACE_TARGET:
+            value: 'log'
+          - name: ACAPY_WALLET_STORAGE_TYPE:
+            value: 'postgres_storage'
+          - name: ACAPY_WALLET_STORAGE_CONFIG:
+            value: '{"url":"172.17.0.1:5437"}' # same as for ACAPY_ENDPOINT
+          - name: ACAPY_WALLET_STORAGE_CREDS:
+              # update with reald db values
+            value: '{\"account\":\"db_user_name\",\"password\":\"db_password\",\"admin_account\":\"admin_db_user_name\",\"admin_password\":\"admin_db_password\"}'
+          - name: ACAPY_WALLET_NAME:
+            value: 'acapy_base_wallet'
+          - name: ACAPY_AUTO_ACCEPT_INVITES:
+            value: 'true'
+          - name: ACAPY_AUTO_ACCEPT_REQUESTS:
+            value: 'true'
+          - name: ACAPY_AUTO_STORE_CREDENTIAL:
+            value: 'true'
+          - name: ACAPY_WEBHOOK_URL:
+            value: 'https://webhook.site/86832008-51c0-4e5d-b9e0-aedcb8acf69c'
+          - name: ACAPY_MULTITENANT:
+            value: 'true'
+          - name: ACAPY_MULTITENANT_ADMIN:
+            value: 'true'
+          - name: ACAPY_MULTITENANT_JWT_SECRET:
+            value: 'sec'            
+            valueFrom:
+              secretKeyRef:
+                key: aws-chime-secret-key
+                name: poc-acapy-multitenant
+          - name: AWS_CHIME_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                key: aws-chime-key-id
+                name: poc-acapy-multitenant
+          - name: CALL_LIMIT_TOTAL
+            value: "10"
+          - name: CALL_LIMIT_HOURS
+            value: "1"
+          - name: CALL_LIMIT_JOINABLE_HOURS
+            value: "24"
