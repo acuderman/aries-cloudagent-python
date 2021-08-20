@@ -30,8 +30,8 @@ spec:
           # image: "715299534867.dkr.ecr.us-east-1.amazonaws.com/poc-acapy-multitenant:2a333a454c04f014aa02895249b2a98d4d924b78" 
           imagePullPolicy: IfNotPresent
           ports:
-            - name: mainport
-              containerPort: 9836
+            - '8040:8040'
+            - '8041:8041'
           resources:
             limits:
               cpu: 500m
