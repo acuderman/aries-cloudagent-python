@@ -219,6 +219,9 @@ class InboundSession:
             self._check_relay_context = False
 
         message = await self.parse_inbound(payload_enc)
+        print("DIDComm_message")
+        # print(message.receipt)
+        print(message.payload)
         self.receive_inbound(message)
         return message
 

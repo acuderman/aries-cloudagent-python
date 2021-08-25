@@ -458,6 +458,9 @@ class AriesAgent(DemoAgent):
             # verifier role
             log_status("#27 Process the proof provided by X")
             log_status("#28 Check if proof is valid")
+            print("proof-presentation")
+            print(message)
+
             proof = await self.admin_POST(
                 f"/present-proof-2.0/records/{pres_ex_id}/verify-presentation"
             )
