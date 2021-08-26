@@ -473,7 +473,7 @@ async def register(app: web.Application):
     app.add_routes(
         [
             web.get("/multitenancy/wallets", wallets_list, allow_head=False),
-            web.post("/multitenancy/wallet", wallet_create),
+            web.post("/v1/acapy/multitenancy/wallet", wallet_create),
             web.get("/multitenancy/wallet/{wallet_id}", wallet_get, allow_head=False),
             web.put("/multitenancy/wallet/{wallet_id}", wallet_update),
             web.post("/multitenancy/wallet/{wallet_id}/token", wallet_create_token),

@@ -302,7 +302,7 @@ class AdminServer(BaseAdminServer):
                 authorization_header = request.headers.get("Authorization")
                 path = request.path
 
-                is_multitenancy_path = path.startswith("/multitenancy")
+                is_multitenancy_path = path.startswith("/v1/acapy/multitenancy")
                 is_server_path = path in self.server_paths or path == "/features"
 
                 # subwallets are not allowed to access multitenancy routes

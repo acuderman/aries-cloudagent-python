@@ -455,7 +455,7 @@ class DemoAgent:
         self.wallet_name = target_wallet_name
         self.wallet_key = target_wallet_name
         self.ident = target_wallet_name
-        new_wallet = await self.agency_admin_POST("/multitenancy/wallet", wallet_params)
+        new_wallet = await self.agency_admin_POST("/v1/acapy/multitenancy/wallet", wallet_params)
         self.log("New wallet params:", new_wallet)
         self.managed_wallet_params = new_wallet
         if public_did:

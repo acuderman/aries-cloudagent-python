@@ -2506,7 +2506,7 @@
         }
       }
     },
-    "/multitenancy/wallet" : {
+    "/v1/acapy/multitenancy/wallet" : {
       "post" : {
         "tags" : [ "multitenancy" ],
         "summary" : "Create a subwallet",
