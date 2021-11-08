@@ -322,7 +322,7 @@ class FaberAgent(AriesAgent):
                                                 "uri": "https://www.w3.org/2018/credentials#VerifiableCredential"
                                             },
                                             {
-                                                "uri": "https://w3id.org/citizenship#PermanentResident"
+                                                "uri": "https://w3id.org/test#test"
                                             },
                                         ],
                                         "constraints": {

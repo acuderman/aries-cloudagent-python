@@ -197,14 +197,14 @@ class DIFPresFormatHandler(V20PresFormatHandler):
                     input_descriptor.constraint.limit_disclosure == "required"
                 )
                 uri_list = []
-                for schema in input_descriptor.schemas:
-                    uri = schema.uri
-                    if schema.required is None:
-                        required = True
-                    else:
-                        required = schema.required
-                    if required:
-                        uri_list.append(uri)
+                # for schema in input_descriptor.schemas:
+                #     uri = schema.uri
+                #     if schema.required is None:
+                #         required = True
+                #     else:
+                #         required = schema.required
+                #     if required:
+                #         uri_list.append(uri)
                 if len(uri_list) == 0:
                     uri_list = None
                 if limit_disclosure:
@@ -297,6 +297,8 @@ class DIFPresFormatHandler(V20PresFormatHandler):
                     vcrecord_list,
                     vcrecord_ids_set,
                 ) = await self.process_vcrecords_return_list(records, record_ids)
+                # print(records)
+                print(vcrecord_list)
                 record_ids = vcrecord_ids_set
                 credentials_list = credentials_list + vcrecord_list
         except StorageNotFoundError as err:

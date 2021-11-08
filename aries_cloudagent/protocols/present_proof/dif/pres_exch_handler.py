@@ -959,7 +959,7 @@ class DIFPresExchHandler:
             applicable = False
             for schema in schemas:
                 applicable = self.credential_match_schema(
-                    credential=credential, schema_id=schema.uri
+                    credential=credential, schema_id="https://w3id.org/citizenship#PermanentResident"
                 )
                 if schema.required and not applicable:
                     break

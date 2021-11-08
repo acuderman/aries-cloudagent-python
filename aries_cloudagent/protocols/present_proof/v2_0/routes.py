@@ -515,8 +515,8 @@ async def present_proof_credentials_list(request: web.BaseRequest):
                         required = True
                     else:
                         required = schema.required
-                    if required:
-                        uri_list.append(uri)
+                    #if required:
+                        #uri_list.append(uri)
                 if len(uri_list) == 0:
                     uri_list = None
                 if limit_disclosure:
@@ -629,6 +629,8 @@ async def present_proof_credentials_list(request: web.BaseRequest):
             outbound_handler,
         )
     credentials = list(indy_credentials) + dif_cred_value_list
+
+    print(credentials)
     return web.json_response(credentials)
 
 
