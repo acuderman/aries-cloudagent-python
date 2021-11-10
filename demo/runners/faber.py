@@ -138,23 +138,18 @@ class FaberAgent(AriesAgent):
                             "credential": {
                                 "@context": [
                                     "https://www.w3.org/2018/credentials/v1",
-                                    "https://w3id.org/citizenship/v1",
-                                    "https://w3id.org/security/bbs/v1",
+                                    "https://ssi.globalid.dev/v1/schema-registry/contexts/Driving%20license/versions/1",
                                 ],
                                 "type": [
                                     "VerifiableCredential",
-                                    "PermanentResident",
+                                    "Driving license",
                                 ],
                                 "id": "https://credential.example.com/residents/1234567890",
                                 "issuer": self.did,
                                 "issuanceDate": "2020-01-01T12:00:00Z",
                                 "credentialSubject": {
-                                    "type": ["PermanentResident"],
-                                    "givenName": "ALICE",
-                                    "familyName": "SMITH",
-                                    "gender": "Female",
-                                    "birthCountry": "Bahamas",
-                                    "birthDate": "1958-07-17",
+                                    "type": ["Driving license"],
+                                    "date_of_birth": "1958-07-17",
                                 },
                             },
                             "options": {"proofType": SIG_TYPE_BLS},
@@ -316,23 +311,27 @@ class FaberAgent(AriesAgent):
                                 "format": {"ldp_vp": {"proof_type": [SIG_TYPE_BLS]}},
                                 "input_descriptors": [
                                     {
-                                        "id": "citizenship_input_1",
-                                        "name": "EU Driver's License",
-                                        "schema": [
+                                        # test oneof
+                                        "id": "ldsmgkfd",
+                                        "name": "dsfdsfdsf",
+                                        "schema": {
+                                            "oneof_filter": [
                                             {
-                                                "uri": "https://www.w3.org/2018/credentials#VerifiableCredential"
+                                                "uri": "https://ssi.globalid.dev/v1/schema-registry/contexts/Driving%20license/versions/1#Driving%20license"
                                             },
                                             {
-                                                "uri": "https://w3id.org/citizenship#PermanentResident"
+                                                "uri": "https://ssi.globalid.dev/v1/schema-registry/contexts/Passport/versions/1#Passport"
                                             },
-                                        ],
+                                            ]
+                                        },
                                         "constraints": {
                                             "limit_disclosure": "required",
                                             "is_holder": [
                                                 {
                                                     "directive": "required",
                                                     "field_id": [
-                                                        "1f44d55f-f161-4938-a659-f8026467f126"
+                                                        "1f44d55f-f161-4938-a659-f8026467f126",
+                                                        "1f44d55f-f161-4938-a659-f8026467f127"
                                                     ],
                                                 }
                                             ],
@@ -340,16 +339,19 @@ class FaberAgent(AriesAgent):
                                                 {
                                                     "id": "1f44d55f-f161-4938-a659-f8026467f126",
                                                     "path": [
-                                                        "$.credentialSubject.familyName"
+                                                        "$.credentialSubject.date_of_birth"
                                                     ],
                                                     "purpose": "The claim must be from one of the specified person",
-                                                    "filter": {"const": "SMITH"},
+                                                    "filter": {"minimum": "1955-07-17", "type": "string", "format": "date"},
                                                 },
                                                 {
+                                                    "id": "1f44d55f-f161-4938-a659-f8026467f127",
                                                     "path": [
-                                                        "$.credentialSubject.givenName"
+                                                        "$.credentialSubject.date_of_birth"
                                                     ],
                                                     "purpose": "The claim must be from one of the specified person",
+                                                    "filter": {"maximum": "1959-07-17", "type": "string",
+                                                               "format": "date"},
                                                 },
                                             ],
                                         },

@@ -233,6 +233,7 @@ class AriesAgent(DemoAgent):
                     {"method": "key", "options": {"key_type": "bls12381g2"}},
                 )
                 data = {"holder_did": holder_did["result"]["did"]}
+                #data = {}
                 await self.admin_POST(
                     f"/issue-credential-2.0/records/{cred_ex_id}/send-request", data
                 )
