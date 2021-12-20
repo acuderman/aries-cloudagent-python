@@ -64,6 +64,8 @@ class FaberAgent(AriesAgent):
         # TODO define a dict to hold credential attributes
         # based on cred_def_id
         self.cred_attrs = {}
+        self.issue_order = 1
+
 
     async def detect_connection(self):
         await self._connection_ready
@@ -133,36 +135,135 @@ class FaberAgent(AriesAgent):
                 return offer_request
 
             elif cred_type == CRED_FORMAT_JSON_LD:
-                offer_request = {
-                    "connection_id": self.connection_id,
-                    "filter": {
-                        "ld_proof": {
-                            "credential": {
-                                "@context": [
-                                    "https://www.w3.org/2018/credentials/v1",
-                                    "https://w3id.org/citizenship/v1",
-                                    "https://w3id.org/security/bbs/v1",
-                                ],
-                                "type": [
-                                    "VerifiableCredential",
-                                    "PermanentResident",
-                                ],
-                                "id": "https://credential.example.com/residents/1234567890",
-                                "issuer": self.did,
-                                "issuanceDate": "2020-01-01T12:00:00Z",
-                                "credentialSubject": {
-                                    "type": ["PermanentResident"],
-                                    "givenName": "ALICE",
-                                    "familyName": "SMITH",
-                                    "gender": "Female",
-                                    "birthCountry": "Bahamas",
-                                    "birthDate": "1958-07-17",
-                                },
-                            },
-                            "options": {"proofType": SIG_TYPE_BLS},
-                        }
-                    },
+                file = {
+                    "type": "File",
+                    "url": 'https://example.com',
+                    "decryption_key": 'decryption_key',
+                    "media_type": 'image/png',
+                    "sha_512_sum": 'sha_512_sum',
                 }
+
+                if self.issue_order == 1:
+                    offer_request = {
+                        "connection_id": self.connection_id,
+                        "filter": {
+                            "ld_proof": {
+                                "credential": {
+                                    "@context": [
+                                        "https://www.w3.org/2018/credentials/v1",
+                                        "https://ssi.globalid.dev/v1/schema-registry/contexts/Driving%20license/versions/2",
+                                        "https://w3id.org/security/bbs/v1",
+                                    ],
+                                    "type": [
+                                        "VerifiableCredential",
+                                        "Driving license",
+                                    ],
+                                    "id": "https://credential.example.com/residents/1234567890",
+                                    "issuer": self.did,
+                                    "issuanceDate": "2020-01-01T12:00:00Z",
+                                    "credentialSubject": {
+                                        "type": "Driving license",
+                                        "gender_legal": 'M',
+                                        "selfie_image": file,
+                                        "selfie_video": file,
+                                        "date_of_birth": '1990-10-10',
+                                        "document_number": '10',
+                                        "full_name_legal": 'Full name',
+                                        "last_name_legal": 'Last name',
+                                        "first_name_legal": 'First name',
+                                        "document_front_image": file,
+                                        "document_date_of_issue": '1992-10-10',
+                                        "document_expiration_date": '2023-10-10',
+                                        "document_country_of_issue": 'SI',
+                                    },
+                                },
+                                "options": {"proofType": SIG_TYPE_BLS},
+                            }
+                        },
+                    }
+                    self.issue_order = 2
+
+                elif self.issue_order == 2:
+                    offer_request = {
+                        "connection_id": self.connection_id,
+                        "filter": {
+                            "ld_proof": {
+                                "credential": {
+                                    "@context": [
+                                        "https://www.w3.org/2018/credentials/v1",
+                                        "https://ssi.globalid.dev/v1/schema-registry/contexts/Passport/versions/3",
+                                        "https://w3id.org/security/bbs/v1",
+                                    ],
+                                    "type": [
+                                        "VerifiableCredential",
+                                        "Driving license",
+                                    ],
+                                    "id": "https://credential.example.com/residents/1234567890",
+                                    "issuer": self.did,
+                                    "issuanceDate": "2020-01-01T12:00:00Z",
+                                    "credentialSubject": {
+                                        "type": "Driving license",
+                                        "gender_legal": 'M',
+                                        "selfie_image": file,
+                                        "selfie_video": file,
+                                        "date_of_birth": '1990-10-10',
+                                        "document_number": '10',
+                                        "full_name_legal": 'Full name',
+                                        "last_name_legal": 'Last name',
+                                        "first_name_legal": 'First name',
+                                        "document_front_image": file,
+                                        "document_date_of_issue": '1992-10-10',
+                                        "document_expiration_date": '2023-10-10',
+                                        "document_country_of_issue": 'SI',
+                                    },
+                                },
+                                "options": {"proofType": SIG_TYPE_BLS},
+                            }
+                        },
+                    }
+
+                    self.issue_order = 3
+                else:
+                    offer_request = {
+                        "connection_id": self.connection_id,
+                        "filter": {
+                            "ld_proof": {
+                                "credential": {
+                                    "@context": [
+                                        "https://www.w3.org/2018/credentials/v1",
+                                        "https://ssi.globalid.dev/v1/schema-registry/contexts/Passport/versions/5",
+                                        "https://w3id.org/security/bbs/v1",
+                                    ],
+                                    "type": [
+                                        "VerifiableCredential",
+                                        "Driving license",
+                                    ],
+                                    "id": "https://credential.example.com/residents/1234567890",
+                                    "issuer": self.did,
+                                    "issuanceDate": "2020-01-01T12:00:00Z",
+                                    "credentialSubject": {
+                                        "type": "Driving license",
+                                        "gender_legal": 'M',
+                                        "selfie_image": file,
+                                        "selfie_video": file,
+                                        "date_of_birth": '1990-10-10',
+                                        "document_number": '10',
+                                        "full_name_legal": 'Full name',
+                                        "last_name_legal": 'Last name',
+                                        "first_name_legal": 'First name',
+                                        "document_front_image": file,
+                                        "document_date_of_issue": '1992-10-10',
+                                        "document_expiration_date": '2023-10-10',
+                                        "document_country_of_issue": 'SI',
+                                    },
+                                },
+                                "options": {"proofType": SIG_TYPE_BLS},
+                            }
+                        },
+                    }
+
+                    self.issue_order = 1
+
                 return offer_request
 
             else:
