@@ -155,6 +155,10 @@ class UpdateWalletRequestSchema(OpenAPISchema):
             (self-attested) to other agents as part of forming a connection.",
         example="https://aries.ca/images/sample.png",
     )
+    wallet_name = fields.Str(
+        description="wallet_name.",
+        example="wallet_name",
+    )
 
 
 class CreateWalletResponseSchema(WalletRecordSchema):
@@ -346,9 +350,10 @@ async def wallet_update(request: web.BaseRequest):
     wallet_dispatch_type = body.get("wallet_dispatch_type")
     label = body.get("label")
     image_url = body.get("image_url")
+    wallet_name = body.get("wallet_name")
 
     if all(
-        v is None for v in (wallet_webhook_urls, wallet_dispatch_type, label, image_url)
+        v is None for v in (wallet_webhook_urls, wallet_dispatch_type, label, image_url, wallet_name)
     ):
         raise web.HTTPBadRequest(reason="At least one parameter is required.")
 
@@ -368,6 +373,11 @@ async def wallet_update(request: web.BaseRequest):
         settings["default_label"] = label
     if image_url is not None:
         settings["image_url"] = image_url
+    if wallet_name is not None:
+        # check if wallet name already exists...
+        settings["wallet.name"] = wallet_name
+
+    # alt is to add new option
 
     try:
         multitenant_mgr = context.profile.inject(BaseMultitenantManager)
